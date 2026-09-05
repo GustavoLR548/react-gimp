@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/react-gimp-sync-reminder.mjs",
+            "statusMessage": "Checking if this touches react-gimp's project-authoring API..."
+          }
+        ]
+      }
+    ]
+  }
+}

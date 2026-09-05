@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+/* Root font-size pinned globally so every rem-based Tailwind size (text-4xl,
+   p-8) is stable regardless of the app's own root font-size — a 1:1-fidelity
+   killer and the single most likely cause of browser-vs-headless divergence
+   otherwise. See .spec/01-artboard.md. */
+html {
+  font-size: 16px;
+}
+
+.gm-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.gm-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.gm-pages {
+  display: flex;
+}
+
+.gm-pages--column {
+  flex-direction: column;
+}
+
+.gm-pages--row {
+  flex-direction: row;
+}
+
+.gm-page {
+  position: relative;
+  flex: none; /* flex-shrink:1 would squash a wide page in a row layout */
+  overflow: hidden; /* the artboard clips its own bleed */
+  contain: layout paint; /* NOT `style` — that breaks CSS counters. Also
+    makes .gm-page a containing block for position:fixed descendants, so
+    preview and capture agree about where a fixed child ends up. */
+  isolation: isolate; /* own stacking context: one page's z-50 can't leak */
+  transform: none; /* the invariant, enforced at the CSS layer too */
+  box-sizing: border-box;
+  font-size: 16px;
+  line-height: normal;
+  color: #000;
+  text-align: start;
+}
+
+.gm-exporting,
+.gm-exporting * {
+  animation-play-state: paused !important;
+}
+
+.gm-img-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 12px;
+  background: repeating-linear-gradient(45deg, #3f1d1d, #3f1d1d 10px, #2a1414 10px, #2a1414 20px);
+  color: #fca5a5;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+}
