@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { defineFrame, defineProject, ui } from '@react-gimp/sdk'
+import type { ProjectDef } from '@react-gimp/sdk'
 import { CarouselSlide } from './carousel/CarouselSlide'
-import { defineFrame, defineProject, ui } from './defineProject'
-import type { ProjectDef } from './defineProject'
+import { GodotAndroidExportFail } from './godot-android-export-fail/GodotAndroidExportFail'
 import { GodotAndroidThumbnail } from './godot-android-thumbnail/GodotAndroidThumbnail'
 import { Thumbnail } from './thumbnail/Thumbnail'
 
@@ -20,48 +21,36 @@ const slideSchema = z.object({
 })
 
 const godotAndroidSchema = z.object({
-  tag: z.string().min(1).register(ui, { label: 'Versão / Tag da Engine', order: 0 }),
-  titlePrefix: z.string().min(1).register(ui, { label: 'Prefixo do Título', order: 1 }),
-  titleMain: z.string().min(1).register(ui, { label: 'Destaque do Título (Verde)', order: 2 }),
-  subtitle: z.string().register(ui, { label: 'Subtítulo', order: 3 }),
-  badgeText: z.string().register(ui, { label: 'Selo de Destaque', order: 4 }),
-  statusPill: z.string().register(ui, { label: 'Aviso de Status', order: 5 }),
-  chips: z.string().register(ui, {
-    label: 'Tags de Recursos (separadas por vírgula)',
-    help: 'Tags separadas por vírgula, ex: SDK e Keystore, Build Gradle, Google Play',
-    order: 6,
-  }),
-  author: z.string().register(ui, { label: 'Canal / Autor', order: 7 }),
+  titlePrefix: z.string().min(1).register(ui, { label: 'Prefixo do Título', order: 0 }),
+  titleMain: z.string().min(1).register(ui, { label: 'Destaque do Título (Verde)', order: 1 }),
+  subtitle: z.string().register(ui, { label: 'Subtítulo (uma linha curta)', order: 2 }),
+  stampText: z.string().register(ui, { label: 'Selo de Veredito', order: 3 }),
   gameImage: z.string().register(ui, {
     label: 'Captura de Tela do Jogo',
     control: { kind: 'file' },
     help: 'Envie uma imagem do seu jogo para a tela do celular (ou deixe vazio para o jogo padrão)',
-    order: 8,
+    order: 4,
   }),
-  background: z.string().register(ui, { label: 'Cor de Fundo', control: { kind: 'color' }, order: 9 }),
-  godotColor: z.string().register(ui, { label: 'Cor Azul Godot', control: { kind: 'color' }, order: 10 }),
-  androidColor: z.string().register(ui, { label: 'Cor Verde Android', control: { kind: 'color' }, order: 11 }),
-  showEditorOverlay: z.boolean().register(ui, {
-    label: 'Exibir Painel de Exportação Godot',
+  background: z.string().register(ui, { label: 'Cor de Fundo', control: { kind: 'color' }, order: 5 }),
+  godotColor: z.string().register(ui, { label: 'Cor Azul Godot', control: { kind: 'color' }, order: 6 }),
+  androidColor: z.string().register(ui, { label: 'Cor Verde Android', control: { kind: 'color' }, order: 7 }),
+  showStamp: z.boolean().register(ui, {
+    label: 'Exibir Selo de Veredito',
     control: { kind: 'checkbox' },
-    order: 12,
+    order: 8,
   }),
 })
 
 const godotAndroidDefaults = {
-  tag: 'GODOT 4.4',
   titlePrefix: 'EXPORTAR PARA',
   titleMain: 'ANDROID',
-  subtitle: 'Passo a Passo Completo • SDK, Keystore e Gradle',
-  badgeText: '100% FUNCIONAL',
-  statusPill: '✓ APK E AAB PRONTOS',
-  chips: 'SDK e Keystore, Build Gradle, Deploy em 1 Clique, Google Play',
-  author: 'TUTORIAIS GODOT',
+  subtitle: 'SDK, Keystore e Gradle em um vídeo só',
+  stampText: '100% FUNCIONAL',
   gameImage: '',
   background: '#12161f',
   godotColor: '#478cbf',
   androidColor: '#3ddc84',
-  showEditorOverlay: true,
+  showStamp: true,
 }
 
 const godotAndroidProject = defineProject({
@@ -84,6 +73,63 @@ const godotAndroidProject = defineProject({
       schema: godotAndroidSchema,
       defaults: godotAndroidDefaults,
       render: (values) => <GodotAndroidThumbnail {...values} />,
+    }),
+  ],
+})
+
+const godotAndroidFailSchema = z.object({
+  titlePrefix: z.string().min(1).register(ui, { label: 'Prefixo do Título', order: 0 }),
+  titleMain: z.string().min(1).register(ui, { label: 'Destaque do Título (Vermelho)', order: 1 }),
+  subtitle: z.string().register(ui, { label: 'Subtítulo (uma linha curta)', order: 2 }),
+  stampText: z.string().register(ui, { label: 'Selo de Veredito', order: 3 }),
+  crashImage: z.string().register(ui, {
+    label: 'Captura de Tela do Crash',
+    control: { kind: 'file' },
+    help: 'Envie uma captura real do crash (ou deixe vazio para a Tela Azul padrão)',
+    order: 4,
+  }),
+  background: z.string().register(ui, { label: 'Cor de Fundo', control: { kind: 'color' }, order: 5 }),
+  godotColor: z.string().register(ui, { label: 'Cor Azul Godot', control: { kind: 'color' }, order: 6 }),
+  errorColor: z.string().register(ui, { label: 'Cor de Erro', control: { kind: 'color' }, order: 7 }),
+  showStamp: z.boolean().register(ui, {
+    label: 'Exibir Selo de Veredito',
+    control: { kind: 'checkbox' },
+    order: 8,
+  }),
+})
+
+const godotAndroidFailDefaults = {
+  titlePrefix: '1 ERRO',
+  titleMain: 'TRAVA TUDO',
+  subtitle: 'Builda liso no PC, quebra na hora de instalar',
+  stampText: 'FALHOU',
+  crashImage: '',
+  background: '#12161f',
+  godotColor: '#478cbf',
+  errorColor: '#ff4757',
+  showStamp: true,
+}
+
+const godotAndroidFailProject = defineProject({
+  id: 'godot-android-export-fail',
+  name: 'Erro ao Exportar Godot para Android (Thumbnail)',
+  description: 'Thumbnail de alerta para vídeos sobre por que o export da Godot para Android falha.',
+  frames: [
+    defineFrame({
+      id: 'youtube-thumbnail',
+      name: 'Thumbnail do YouTube (1280×720)',
+      preset: 'youtube',
+      schema: godotAndroidFailSchema,
+      defaults: godotAndroidFailDefaults,
+      render: (values) => <GodotAndroidExportFail {...values} />,
+    }),
+    defineFrame({
+      id: 'social-card',
+      name: 'Card para Redes Sociais / OG (1200×630)',
+      preset: 'og',
+      schema: godotAndroidFailSchema,
+      defaults: godotAndroidFailDefaults,
+      render: (values) => <GodotAndroidExportFail {...values} />,
     }),
   ],
 })
@@ -165,6 +211,7 @@ const instagramCarousel = defineProject({
 
 export const projects: ProjectDef[] = [
   godotAndroidProject,
+  godotAndroidFailProject,
   youtubeThumbnail,
   ogCard,
   instagramCarousel,

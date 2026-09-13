@@ -1,4 +1,4 @@
-import { Img } from '../../react/Img'
+import { Img } from '@react-gimp/sdk'
 
 export type ThumbnailProps = {
   title: string

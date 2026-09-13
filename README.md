@@ -76,19 +76,21 @@ Visit `http://localhost:5173` to launch the workspace:
 
 ```text
 react-gimp/
+├── projects/                # Private @react-gimp/projects package
+│   ├── carousel/            # Multi-slide carousel templates
+│   ├── godot-android-thumbnail/ # High-impact Godot 4 YouTube thumbnail design
+│   ├── thumbnail/           # Sample video thumbnail design
+│   ├── package.json         # Local package linked into node_modules by npm
+│   └── projects.tsx         # Active project registry and package entrypoint
+├── packages/
+│   └── sdk/                 # Project authoring API exposed as @react-gimp/sdk
 ├── scripts/
 │   └── export-headless.ts   # CLI script for Playwright-driven exports
 ├── src/
 │   ├── app/                 # Workspace shell, sidebar inspector, toolbar, storage
 │   ├── core/                # Dimension presets, unit conversions, aspect ratio fitting
 │   ├── export/              # Export utilities (assets preloading, CORS helpers, ZIP/PDF)
-│   ├── react/               # Core framework primitives (<Gimp>, <Canvas>, <Page>, <Img>)
-│   └── projects/            # Project definitions and design components
-│       ├── carousel/        # Multi-slide carousel templates
-│       ├── godot-android-thumbnail/ # High-impact Godot 4 YouTube thumbnail design
-│       ├── thumbnail/       # Sample video thumbnail design
-│       ├── defineProject.ts # Type-safe project/frame builder & UI schema registry
-│       └── projects.tsx     # Active project registry
+│   └── react/               # Core framework primitives (<Gimp>, <Canvas>, <Page>, <Img>)
 ├── index.html
 ├── vite.config.ts
 └── vitest.config.ts
@@ -102,11 +104,14 @@ A **frame** represents one design: an `id`, an aspect-ratio `preset`, a Zod `sch
 
 ### Defining Frames & Schemas
 
-Create or edit projects in `src/projects/projects.tsx`:
+Create or edit projects in `projects/projects.tsx`. `npm install` links that
+private package at `node_modules/@react-gimp/projects`, which is how the app
+imports the registry. Project packages use the host-owned `@react-gimp/sdk`
+authoring API:
 
 ```tsx
 import { z } from 'zod'
-import { defineFrame, defineProject, ui } from './defineProject'
+import { defineFrame, defineProject, ui } from '@react-gimp/sdk'
 
 const heroFrame = defineFrame({
   id: 'hero',
@@ -140,6 +145,46 @@ export const projects = [
 ]
 ```
 
+### Using a Separate Git Repository
+
+A replacement project repository is an npm package with the name
+`@react-gimp/projects`, a `projects.tsx` entrypoint that exports `projects`,
+and `@react-gimp/sdk` as a peer dependency. Its project source imports
+`defineFrame`, `defineProject`, `ui`, and `Img` from `@react-gimp/sdk`; it
+must not reach into react-gimp with relative paths.
+
+Its root `package.json` should follow this shape:
+
+```json
+{
+  "name": "@react-gimp/projects",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": "./projects.tsx",
+  "peerDependencies": {
+    "@react-gimp/sdk": "^0.1.0",
+    "react": "^18.3.1",
+    "zod": "^4.5.4"
+  }
+}
+```
+
+Point react-gimp at that repository by replacing the local dependency in
+`package.json`:
+
+```json
+{
+  "dependencies": {
+    "@react-gimp/projects": "git+ssh://git@github.com/you/react-gimp-projects.git#main"
+  }
+}
+```
+
+Then run `npm install`. The app loads the replacement through the same
+`@react-gimp/projects` import, and Tailwind scans that installed package for
+design classes.
+
 ### Inspector UI Metadata
 
 - **`schema.register(ui, { ... })`**: Provides hints for how the field renders in the inspector (`label`, `control`, `order`, `help`). It is compile-time checked against your schema keys.
@@ -172,7 +217,7 @@ The repository comes configured with real-world presets and ready-to-use project
 | `square` | 1080 × 1080 px | Instagram Posts & Carousels |
 | `story` | 1080 × 1920 px | Reels / Stories / TikTok |
 
-### Featured Templates in `src/projects/`
+### Featured Templates in `projects/`
 1. **Godot Android Export Thumbnail**: High-impact, multi-layered YouTube thumbnail & social card with blueprint grid, tech badges, and Godot 4 asset branding.
 2. **Standard YouTube Thumbnail**: Minimalist, clean card featuring title, author, and background image slot.
 3. **OpenGraph Card**: Reusable card layout tailored for social sharing previews.

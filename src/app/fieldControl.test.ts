@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { ui } from '../projects/defineProject'
+import { ui } from '@react-gimp/sdk'
 import { fieldsFor } from './fieldControl'
 
 describe('fieldsFor', () => {

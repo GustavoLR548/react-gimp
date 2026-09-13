@@ -61,7 +61,7 @@ function base64FromDataUrl(dataUrl: string): string {
 }
 
 // Scraped from the rendered index page's DOM rather than imported from
-// src/projects/projects.tsx, so the Node side of this script never imports
+// @react-gimp/projects, so the Node side of this script never imports
 // .tsx project components. See .spec/08-headless.md.
 async function discoverProjectIds(page: PlaywrightPage, address: string): Promise<string[]> {
   await page.goto(address, { waitUntil: 'networkidle' })

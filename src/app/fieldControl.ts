@@ -1,6 +1,6 @@
 import type { ZodObject, ZodType } from 'zod'
-import type { Control, ControlMeta } from '../projects/defineProject'
-import { ui } from '../projects/defineProject'
+import { ui } from '@react-gimp/sdk'
+import type { Control, ControlMeta } from '@react-gimp/sdk'
 
 export type FieldSpec = { key: string; meta: ControlMeta; control: Control }
 

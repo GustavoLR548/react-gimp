@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { treeifyError } from 'zod'
-import type { AnyFrameDef, FrameValues } from '../projects/defineProject'
+import type { AnyFrameDef, FrameValues } from '@react-gimp/sdk'
 import { fieldsFor } from './fieldControl'
 import { FieldControl } from './FieldControl'
 

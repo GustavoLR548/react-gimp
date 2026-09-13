@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
-import type { Control } from '../projects/defineProject'
-import { DEFAULT_MAX_FILE_SIZE_BYTES } from '../projects/defineProject'
+import { DEFAULT_MAX_FILE_SIZE_BYTES } from '@react-gimp/sdk'
+import type { Control } from '@react-gimp/sdk'
 
 export type FieldControlProps = {
   label: string

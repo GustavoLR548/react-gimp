@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { FrameValues, ProjectDef } from '../projects/defineProject'
+import type { FrameValues, ProjectDef } from '@react-gimp/sdk'
 import type { ProjectValues } from './projectStorage'
 import { loadProjectValues, saveProjectValues } from './projectStorage'
 

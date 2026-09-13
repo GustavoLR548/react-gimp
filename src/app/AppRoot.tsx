@@ -1,4 +1,4 @@
-import { projects } from '../projects/projects'
+import { projects } from '@react-gimp/projects'
 import { ProjectIndex } from './ProjectIndex'
 import { ProjectView } from './ProjectView'
 

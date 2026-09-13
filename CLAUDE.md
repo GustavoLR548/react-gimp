@@ -57,14 +57,15 @@ not a per-frame-performance rule.
 
 Listed so a future session doesn't helpfully reintroduce them:
 
-- **No npm publishing apparatus.** No exports map, no library-mode build config,
-  no bundle-size budget or test, no `peerDependencies` juggling. The playground
-  imports from `src/` directly.
+- **No npm publishing apparatus.** `@react-gimp/sdk` is a private local `file:`
+  dependency. `@react-gimp/projects` is consumed as source from either the
+  in-repository `file:` dependency or a Git dependency. There is no library-mode
+  build config, bundle-size budget, registry publishing, or versioning policy.
 - **No zero-dependency rule.** Add a dependency if it saves real time. The bar is
   "does this pull its weight," not "can I avoid it." `zod` (^4.5.4, in
   `dependencies`) is the one so far — it drives the inspector's per-frame
   schemas and field hints (`.spec/09-inspector.md`). `core/`, `react/`, and
-  `export/` never import it; it is an `app/`+`projects/`-layer concern.
+  `export/` never import it; it is an SDK + projects + app concern.
 - **No `process.env.NODE_ENV` stripping.** Dev warnings and invariant throws stay
   on always. You are the only person who will ever see them and you want them
   loud.
@@ -81,12 +82,14 @@ Listed so a future session doesn't helpfully reintroduce them:
 
 ```
 react-gimp/
+  packages/
+    sdk/       # host-owned project contract + authoring primitives.
+  projects/   # replaceable @react-gimp/projects package: zod schemas,
+              # registry, and frame content components.
   src/
     core/        # plain functions, no React, no DOM. tested hard.
     react/       # components + hooks. imports core/. never sideways.
     export/      # heavy + DOM-touching. reached only via dynamic import().
-    projects/    # design content + definitions: FrameDef/ProjectDef, the
-                 # zod schemas + `ui` registry, frame content components.
     app/         # shell chrome: routing, landing page, canvas + inspector,
                  # export bar. Tailwind (see §10).
   scripts/       # headless (Node/Playwright) recipes
@@ -94,12 +97,16 @@ react-gimp/
 ```
 
 Dependency direction is one-way and enforced by review: `core/` imports
-nothing local. `export/` imports `core/`. `react/` imports both. `projects/`
-imports `core/` and `react/`. `app/` imports all four. `scripts/` imports
-`core/` and `export/` only — it never imports `.tsx` project components
-(`.spec/08-projects.md`). Never sideways between `react/` components.
+nothing local. `export/` imports `core/`. `react/` imports both. The SDK exposes
+the authoring contract and selected React primitives. The replaceable projects
+package imports only `@react-gimp/sdk`, React, and zod — never relative host
+source paths. `app/` imports the registry through `@react-gimp/projects`, the
+shared contract through `@react-gimp/sdk`, and may import the three internal
+layers. `scripts/` imports `core/` and `export/` only — it never imports `.tsx`
+project components (`.spec/08-projects.md`). Never sideways between `react/`
+components.
 **`core/`, `react/`, and `export/` never import `zod`** — schemas are a
-`projects/`/`app/`-layer concern (`.spec/09-inspector.md`).
+SDK/projects/app-layer concern (`.spec/09-inspector.md`).
 
 **One deliberate stretch of this rule:** `pageRegistry.ts` lives in `react/`,
 not `core/`, even though it holds no React — because it stores `HTMLElement`

@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@source '../../node_modules/@react-gimp/projects';
 
 /* Root font-size pinned globally so every rem-based Tailwind size (text-4xl,
    p-8) is stable regardless of the app's own root font-size — a 1:1-fidelity

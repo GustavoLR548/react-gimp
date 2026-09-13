@@ -1,5 +1,5 @@
 import { warnOnce } from '../core/warnOnce'
-import type { AnyFrameDef, FrameValues } from '../projects/defineProject'
+import type { AnyFrameDef, FrameValues } from '@react-gimp/sdk'
 
 export type ProjectValues = Record<string, FrameValues>
 

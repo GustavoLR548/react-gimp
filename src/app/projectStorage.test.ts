@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { defineFrame } from '../projects/defineProject'
+import { defineFrame } from '@react-gimp/sdk'
 import { loadProjectValues, saveProjectValues, storageKey } from './projectStorage'
 
 const frame = defineFrame({

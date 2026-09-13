@@ -1,0 +1,11 @@
+{
+  "name": "@react-gimp/sdk",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": "./index.ts",
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "zod": "^4.5.4"
+  }
+}

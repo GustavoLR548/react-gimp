@@ -1,7 +1,7 @@
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useRef } from 'react'
 import { Page } from '../react/Page'
-import type { AnyFrameDef, FrameValues } from '../projects/defineProject'
+import type { AnyFrameDef, FrameValues } from '@react-gimp/sdk'
 
 const CLICK_DRAG_THRESHOLD_PX = 4
 

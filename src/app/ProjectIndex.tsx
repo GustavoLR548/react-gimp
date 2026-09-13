@@ -1,5 +1,5 @@
 import { resolvePageSize } from '../core/presets'
-import type { ProjectDef } from '../projects/defineProject'
+import type { ProjectDef } from '@react-gimp/sdk'
 
 export type ProjectIndexProps = {
   projects: ProjectDef[]

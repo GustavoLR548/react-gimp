@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { ZodObject } from 'zod'
 import { z } from 'zod'
-import type { PresetName } from '../core/presets'
+import type { PresetName } from '../../src/core/presets'
 
 export type Control =
   | { kind: 'text' }
